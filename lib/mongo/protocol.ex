@@ -51,6 +51,9 @@ defmodule Mongo.Protocol do
         {:ok, s}
       end
 
+    with {module, function, args} <- opts[:on_connect],
+      do: Kernel.apply(module, function, [result | args])
+      
     case result do
       {:ok, s} ->
         {:ok, s}
