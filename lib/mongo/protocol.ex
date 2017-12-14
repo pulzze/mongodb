@@ -10,13 +10,13 @@ defmodule Mongo.Protocol do
   @update_flags ~w(upsert)a
   @write_concern ~w(w j wtimeout)a
 
-  def disconnect(_error, %{socket: {mod, sock}} = s) do
-    notify_disconnect(s)
+  def disconnect(error, %{socket: {mod, sock}} = s) do
+    notify_disconnect(s, error)
     mod.close(sock)
   end
 
-  defp notify_disconnect(%{connection_type: type, topology_pid: pid, host: host}) do
-    GenServer.cast(pid, {:disconnect, type, host})
+  defp notify_disconnect(%{connection_type: type, topology_pid: pid, host: host}, error) do
+    GenServer.cast(pid, {:disconnect, type, host, error})
   end
 
   def connect(opts) do

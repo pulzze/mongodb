@@ -129,11 +129,13 @@ defmodule Mongo.Topology do
     {:reply, :ok, new_state}
   end
 
-  def handle_cast({:disconnect, :monitor, host}, state) do
+  def handle_cast({:disconnect, :monitor, host, error}, state) do
+    with {module, function, args} <- state[:on_disconnect],
+      do: Kernel.apply(module, function, [error | args])
     new_state = remove_address(host, state)
     {:noreply, new_state}
   end
-  def handle_cast({:disconnect, :client, _host}, state) do
+  def handle_cast({:disconnect, :client, _host, _error}, state) do
     {:noreply, state}
   end
 
