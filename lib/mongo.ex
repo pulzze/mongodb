@@ -780,11 +780,11 @@ defmodule Mongo do
   end
 
   defp modifier_docs([{key, _}|_], type),
-    do: key |> key_to_string |> modifier_key(type)
+    do: key |> modifier_key(type)
   defp modifier_docs(map, _type) when is_map(map) and map_size(map) == 0,
     do: :ok
   defp modifier_docs(map, type) when is_map(map),
-    do: Enum.at(map, 0) |> elem(0) |> key_to_string |> modifier_key(type)
+    do: Enum.at(map, 0) |> elem(0) |> modifier_key(type)
   defp modifier_docs(list, type) when is_list(list),
     do: Enum.map(list, &modifier_docs(&1, type))
 
