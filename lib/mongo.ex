@@ -780,17 +780,17 @@ defmodule Mongo do
   end
 
   defp modifier_docs([{key, _}|_], :replace) when is_atom(key),
-    do: raise(ArgumentError, "replace does not allow atomic modifiers, got: #{other}")
+    do: raise(ArgumentError, "replace does not allow atomic modifiers, got: #{key}")
   defp modifier_docs([{key, _}|_], :replace),
     do: :ok
   defp modifier_docs([{key, _}|_], :update) when is_atom(key),
     do: :ok
   defp modifier_docs([{key, _}|_], :update),
-    do: raise(ArgumentError, "update only allows atomic modifiers, got: #{other}")
+    do: raise(ArgumentError, "update only allows atomic modifiers, got: #{key}")
   defp modifier_docs(map, _type) when is_map(map) and map_size(map) == 0,
     do: :ok
   defp modifier_docs(map, type) when is_map(map),
-    do: Enum.at(map, 0) |> elem(0) |> modifier_key(type)
+    do: Enum.at(map, 0) |> elem(0) |> modifier_docs(type)
   defp modifier_docs(list, type) when is_list(list),
     do: Enum.map(list, &modifier_docs(&1, type))
 
