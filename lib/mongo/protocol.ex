@@ -51,17 +51,22 @@ defmodule Mongo.Protocol do
         {:ok, s}
       end
 
-    with {module, function, args} <- opts[:on_connect],
-      do: Kernel.apply(module, function, [result | args])
-      
     case result do
       {:ok, s} ->
+        with {module, function, args} <- opts[:on_connect],
+          do: Kernel.apply(module, function, [result | args])
         {:ok, s}
       {:disconnect, {:tcp_recv, reason}, _s} ->
+        with {module, function, args} <- opts[:on_disconnect],
+          do: Kernel.apply(module, function, [reason | args])
         {:error, Mongo.Error.exception(tag: :tcp, action: "recv", reason: reason)}
       {:disconnect, {:tcp_send, reason}, _s} ->
+        with {module, function, args} <- opts[:on_disconnect],
+          do: Kernel.apply(module, function, [reason | args])
         {:error, Mongo.Error.exception(tag: :tcp, action: "send", reason: reason)}
       {:error, reason} ->
+        with {module, function, args} <- opts[:on_disconnect],
+          do: Kernel.apply(module, function, [reason | args])
         {:error, reason}
     end
   end
